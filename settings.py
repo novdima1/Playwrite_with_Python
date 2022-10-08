@@ -5,8 +5,3 @@ ENVIRONMENTS = {
     "SYS_07": "https://office.sys-ie-07.intelliflo.systems/"
     }
 
-USER_CREDENTIALS = {
-    "fake": ["fake_login", "fake_pass"],
-    "SYS_06": ["novdima", "testpass0"],
-    "SYS_07": ["novdima07", "testpass5"]
-}
