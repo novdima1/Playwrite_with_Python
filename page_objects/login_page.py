@@ -1,6 +1,6 @@
 from playwright.sync_api import Playwright, expect
 from playwright.sync_api import Page
-import settings
+import credentials
 
 
 class LoginPage:
@@ -34,7 +34,7 @@ class LoginPage:
 
     def validate_user_name_field_is_contain_username(self):
         content = self.page.locator(self.Locators.USER_NAME).input_value()
-        expected = settings.USER_CREDENTIALS["fake"][0]
+        expected = credentials.USER_CREDENTIALS["fake"][0]
         assert content == expected, f"'\n'Expected: {expected}, '\n'Actual: {content}"
         return self
 
