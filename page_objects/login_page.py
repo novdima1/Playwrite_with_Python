@@ -1,5 +1,5 @@
 from playwright.sync_api import Playwright, expect
-from playwright.sync_api import Page
+from page_objects.base_page import BasePage
 import credentials
 
 
@@ -38,14 +38,14 @@ class LoginPage:
         assert content == expected, f"'\n'Expected: {expected}, '\n'Actual: {content}"
         return self
 
+    def verify_page(self, url):
+        assert self.page.url == url
+        return self
+
     def close(self):
         self.page.close()
         self.context.close()
         self.browser.close()
-
-    def verify_page(self, url):
-        assert self.page.url == url
-        return self
 
     class Locators:
         LOGIN = "button[title = \"Login\"]"
@@ -56,39 +56,3 @@ class LoginPage:
         REMIND = "text = Remind me in a week"
         REDIRECT = "text = intelliflo office login east"
         STRONG = "strong"
-
-
-class BasePage:
-
-    def __init__(self, page: Page):
-        self.page = page
-        self.client_search = ClientSearch(self.page)
-
-    def click_adviser_workplace(self):
-        self.page.locator(self.Locators.ADVISER_WORKPLACE).click()
-        self.page.locator(self.Locators.BASE_SEARCH).click()
-        return self
-
-    class Locators:
-        ADVISER_WORKPLACE = "a[title = \"Adviser Workplace\"]"
-        BASE_SEARCH = "text=Clients By Name"
-
-
-class ClientSearch:
-    def __init__(self, page: Page):
-        self.page = page
-
-    def verify_client_by_name_button_contains_valid_name(self):
-        content = self.page.locator(self.Locators.BASE_SEARCH).text_content()
-        assert content == 'Clients By Name', 'No such element'
-        return self
-
-    def verify_client_by_name_button_is_present(self):
-        element = self.page.locator(self.Locators.BASE_SEARCH).is_visible()
-        if element:
-            return self
-        else:
-            raise Exception('No such element')
-
-    class Locators:
-        BASE_SEARCH = "text=Clients By Name"
