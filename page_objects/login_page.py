@@ -1,14 +1,15 @@
 from playwright.sync_api import Playwright, expect
-from page_objects.base_page import BasePage
+# from page_objects.base_page import BasePage
 import credentials
+from playwright.sync_api import Page
+from page_objects.base_page import BasePage
+from page_objects.client_search import ClientSearch
 
 
-class LoginPage:
+class LoginPage(BasePage):
     def __init__(self, playwright: Playwright):
-        self.browser = playwright.chromium.launch(headless=False)
-        self.context = self.browser.new_context()
-        self.page = self.context.new_page()
-        self.base_page = BasePage(self.page)
+        super().__init__(playwright)
+        self.client_search = ClientSearch(self.page)
 
     def login(self, base_url, login, password):
         self.page.goto(base_url)
@@ -33,13 +34,15 @@ class LoginPage:
         return self
 
     def validate_user_name_field_is_contain_username(self):
-        content = self.page.locator(self.Locators.USER_NAME).input_value()
+        actual = self.page.locator(self.Locators.USER_NAME).input_value()
         expected = credentials.USER_CREDENTIALS["fake"][0]
-        assert content == expected, f"'\n'Expected: {expected}, '\n'Actual: {content}"
+        assert actual == expected, f"'\n'Expected: {expected}, '\n'Actual: {actual}"
         return self
 
     def verify_page(self, url):
-        assert self.page.url == url
+        actual = url
+        expected = self.page.url
+        assert expected[:len(url)] == actual, f"'\n'Expected: {expected}, '\n'Actual: {actual}"
         return self
 
     def close(self):

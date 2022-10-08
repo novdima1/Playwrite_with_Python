@@ -9,10 +9,11 @@ def test_io_login_pass(get_playwright):
     page = LoginPage(get_playwright).login(local_variables["url"],
                                            local_variables["login"],
                                            local_variables["password"]).\
-        base_page.click_adviser_workplace().\
-        client_search.verify_client_by_name_button_contains_valid_name(). \
+        click_adviser_workplace().\
+        verify_page(local_variables["url"]).\
+        client_search.verify_client_by_name_button_contains_valid_name().\
         verify_client_by_name_button_is_present().\
-        verify_client_by_name_button_contains_valid_name(). \
+        verify_client_by_name_button_contains_valid_name().\
         verify_client_by_name_button_is_present()
 
 
