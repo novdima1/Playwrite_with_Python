@@ -8,18 +8,16 @@ class LoginPage:
         self.browser = playwright.chromium.launch(headless=False)
         self.context = self.browser.new_context()
         self.page = self.context.new_page()
-        # self.base_url = base_url
         self.base_page = BasePage(self.page)
 
     def login(self, base_url, login, password):
         self.page.goto(base_url)
-        self.page.locator("text=intelliflo office login east").click()
-        self.page.locator("input[name=\"Username\"]").fill(login)
-        self.page.locator("input[name=\"Password\"]").fill(password)
-        self.page.locator("button[title = \"Login\"]").click()
+        self.page.locator(self.Locators.REDIRECT).click()
+        self.page.locator(self.Locators.USER_NAME).fill(login)
+        self.page.locator(self.Locators.PASSWORD).fill(password)
+        self.page.locator(self.Locators.LOGIN).click()
         try:
-            self.page.locator("text=Remind me in a week").click(timeout=300)
-            self.page.wait_for_url(base_url + "nio/dashboard/userdashboard")
+            self.page.locator(self.Locators.REMIND).click(timeout=300)
             return self
         finally:
             return self
@@ -30,15 +28,14 @@ class LoginPage:
         self.close()
 
     def validate_error(self):
-        content = self.page.locator("strong").text_content()
+        content = self.page.locator(self.Locators.STRONG).text_content()
         assert content == 'Error:', f"'\n'Expected: Error:, '\n'Actual: {content}"
         return self
 
     def validate_user_name_field_is_contain_username(self):
-        content = self.page.locator("#username").input_value()
+        content = self.page.locator(self.Locators.USER_NAME).input_value()
         expected = settings.USER_CREDENTIALS["fake"][0]
         assert content == expected, f"'\n'Expected: {expected}, '\n'Actual: {content}"
-        self.page.wait_for_url("https://identity.sys-ie-07.intelliflo.systems/core/identity/account/login")
         return self
 
     def close(self):
@@ -50,6 +47,16 @@ class LoginPage:
         assert self.page.url == url
         return self
 
+    class Locators:
+        LOGIN = "button[title = \"Login\"]"
+        LOGOUT = "text=Logout"
+        USER_NAME = "#username"
+        PASSWORD = "#password"
+        TITLE = 'h1'
+        REMIND = "text = Remind me in a week"
+        REDIRECT = "text = intelliflo office login east"
+        STRONG = "strong"
+
 
 class BasePage:
 
@@ -58,10 +65,13 @@ class BasePage:
         self.client_search = ClientSearch(self.page)
 
     def click_adviser_workplace(self):
-        self.page.locator("a[title = \"Adviser Workplace\"]").click()
-        self.page.locator("text=Clients By Name").click()
-        self.page.wait_for_timeout(3000)
+        self.page.locator(self.Locators.ADVISER_WORKPLACE).click()
+        self.page.locator(self.Locators.BASE_SEARCH).click()
         return self
+
+    class Locators:
+        ADVISER_WORKPLACE = "a[title = \"Adviser Workplace\"]"
+        BASE_SEARCH = "text=Clients By Name"
 
 
 class ClientSearch:
@@ -69,13 +79,16 @@ class ClientSearch:
         self.page = page
 
     def verify_client_by_name_button_contains_valid_name(self):
-        content = self.page.locator("text=Clients By Name").text_content()
+        content = self.page.locator(self.Locators.BASE_SEARCH).text_content()
         assert content == 'Clients By Name', 'No such element'
         return self
 
     def verify_client_by_name_button_is_present(self):
-        element = self.page.locator("a[ui_test_id=\"nav-link10\"]").is_visible()
+        element = self.page.locator(self.Locators.BASE_SEARCH).is_visible()
         if element:
             return self
         else:
             raise Exception('No such element')
+
+    class Locators:
+        BASE_SEARCH = "text=Clients By Name"
