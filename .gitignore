@@ -131,4 +131,5 @@ dmypy.json
 # Credentials
 credentials.py
 
-local_test/
+.local_test/
+.report/
