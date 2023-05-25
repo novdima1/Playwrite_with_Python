@@ -23,3 +23,11 @@ To see the actual report after your tests have finished, you need to use Allure 
 
 $ allure serve /tmp/my_allure_results
 This command will show you generated report in your default browser.
+
+IF created file ptytest.ini:
+[pytest]
+addopts = --alluredir report/
+
+The report folder is created. 
+Then we can run with: 
+allure serve .\report\

@@ -1,9 +1,12 @@
 import pytest
-from pytest import fixture
+from pytest import fixture, hookimpl
 from playwright.sync_api import sync_playwright
 from page_objects.login_page import LoginPage
 import settings
 import credentials
+import allure
+from allure_commons.types import AttachmentType
+from playwright.sync_api import Page
 
 local_variables = {
     "url": settings.ENVIRONMENTS["SYS_07"],
@@ -24,6 +27,7 @@ def login(get_playwright):
                                                  local_variables["login"],
                                                  local_variables["password"])
     yield login_page
+    # allure.attach(Page.get_screenshot_as_png(), name="Screenshot", attachment_type=AttachmentType.PNG)
     login_page.close()
 
 

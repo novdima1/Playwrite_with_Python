@@ -11,7 +11,7 @@ class Test1:
     @allure.severity(allure.severity_level.TRIVIAL)
     def test1_first(self):
         print("\nFirst test passed")
-        assert True
+        assert False
 
     @allure.severity(allure.severity_level.TRIVIAL)
     def test1_second(self):
